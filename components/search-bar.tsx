@@ -1,13 +1,32 @@
+import { SearchService } from "@/api/tmdb/search/searchService";
+import { SearchMovieRequest } from "@/api/tmdb/search/searchTypes";
+import { Movie } from "@/api/tmdb/types";
 import React, { useState } from "react";
-import { Alert, StyleSheet, TextInput } from "react-native";
+import {
+  StyleSheet,
+  TextInput,
+  TextInputSubmitEditingEvent,
+} from "react-native";
 
-export default function SearchBar() {
+export default function SearchBar({
+  callbackFunction,
+}: {
+  callbackFunction: (searchResult: Movie[]) => void;
+}) {
   const [search, setSearch] = useState("");
 
-  const handleSubmit = () => {
-    // Action à effectuer lors de la soumission (ex: recherche, validation, etc.)
-    // Handle TMDB API search
-    Alert.alert("Texte soumis :", search);
+  const triggerCallback = async (e: TextInputSubmitEditingEvent) => {
+    e.preventDefault();
+
+    const params: SearchMovieRequest = {
+      query: search,
+      include_adult: false,
+      page: 1,
+      language: "en-US",
+    };
+    await SearchService.searchMovie(params).then((response) =>
+      callbackFunction(response?.results),
+    );
   };
 
   return (
@@ -16,7 +35,7 @@ export default function SearchBar() {
       placeholder="Search here..."
       value={search}
       onChangeText={setSearch}
-      onSubmitEditing={handleSubmit}
+      onSubmitEditing={(e) => triggerCallback(e)}
     />
   );
 }
