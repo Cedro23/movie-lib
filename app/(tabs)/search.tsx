@@ -33,7 +33,6 @@ export default function SearchScreen() {
 
 const styles = StyleSheet.create({
   titleContainer: {
-    // backgroundColor: "#165baa",
     display: "flex",
     justifyContent: "space-between",
     gap: 16,
